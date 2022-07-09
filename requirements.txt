@@ -1,5 +1,5 @@
 opencv-contrib-python-headless
-threading
+thread6
 mediapipe
 math
 copy
