@@ -1,4 +1,4 @@
-cv2
+opencv-contrib-python-headless
 cvzone
 winsound
 threading
