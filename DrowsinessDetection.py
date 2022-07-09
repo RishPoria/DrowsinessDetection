@@ -1,14 +1,14 @@
-import os
 import cv2
 import copy
+import winsound
 import numpy as np
 from threading import Thread
 from FaceMeshModule import FaceMeshDetector
 from PlotModule import LivePlot
 
-def playsound(frequency=3000,duration=3000):
-        #apt-get install beep
-        os.system('beep -f %s -l %s' % (frequency,duration))
+def sound_alarm():
+    '''Play a 3s beep sound'''
+    winsound.Beep(3300, 3000)
 
 def stackImages(_imgList, cols, scale):
     """
@@ -107,7 +107,7 @@ while True:
             if COUNTER >= EYE_AR_CONSEC_FRAMES:
                 if not ALARM_ON:
                     ALARM_ON = True
-                    t = Thread(target=playsound)
+                    t = Thread(target=sound_alarm)
                     t.deamon = True
                     t.start()
                 cv2.putText(img, "DROWSINESS ALERT!", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
