@@ -1,0 +1,6 @@
+cv2
+cvzone
+winsound
+threading
+cvzone.FaceMeshModule
+cvzone.PlotModule
