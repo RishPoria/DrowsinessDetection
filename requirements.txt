@@ -1,5 +1,4 @@
 opencv-contrib-python-headless
-winsound
 threading
 mediapipe
 math
