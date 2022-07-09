@@ -1,6 +1,7 @@
 opencv-contrib-python-headless
-cvzone
 winsound
 threading
-cvzone.FaceMeshModule
-cvzone.PlotModule
+mediapipe
+math
+copy
+time

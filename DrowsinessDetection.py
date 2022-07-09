@@ -1,14 +1,52 @@
 import cv2
-import cvzone
+import copy
 import winsound
+import numpy as np
 from threading import Thread
-from cvzone.FaceMeshModule import FaceMeshDetector
-from cvzone.PlotModule import LivePlot
+from FaceMeshModule import FaceMeshDetector
+from PlotModule import LivePlot
 
 def sound_alarm():
     '''Play a 3s beep sound'''
     winsound.Beep(3300, 3000)
-    
+
+def stackImages(_imgList, cols, scale):
+    """
+    Stack Images together to display in a single window
+    :param _imgList: list of images to stack
+    :param cols: the num of img in a row
+    :param scale: bigger~1+ ans smaller~1-
+    :return: Stacked Image
+    """
+    imgList = copy.deepcopy(_imgList)
+
+    # make the array full by adding blank img, otherwise the openCV can't work
+    totalImages = len(imgList)
+    rows = totalImages // cols if totalImages // cols * cols == totalImages else totalImages // cols + 1
+    blankImages = cols * rows - totalImages
+
+    width = imgList[0].shape[1]
+    height = imgList[0].shape[0]
+    imgBlank = np.zeros((height, width, 3), np.uint8)
+    imgList.extend([imgBlank] * blankImages)
+
+    # resize the images
+    for i in range(cols * rows):
+        imgList[i] = cv2.resize(imgList[i], (0, 0), None, scale, scale)
+        if len(imgList[i].shape) == 2:
+            imgList[i] = cv2.cvtColor(imgList[i], cv2.COLOR_GRAY2BGR)
+
+    # put the images in a board
+    hor = [imgBlank] * rows
+    for y in range(rows):
+        line = []
+        for x in range(cols):
+            line.append(imgList[y * cols + x])
+        hor[y] = np.hstack(line)
+    ver = np.vstack(hor)
+    return ver
+
+
 cap = cv2.VideoCapture(0)
 detector = FaceMeshDetector(maxFaces=1)
 plotY = LivePlot(640, 480, [25, 50], invert=True)
@@ -81,9 +119,9 @@ while True:
 
         imgPlot = plotY.update(ratioAvg, green if ratioAvg > EYE_AR_THRESH else red)
         # img = cv2.resize(img, (640, 360))
-        imgStack = cvzone.stackImages([img, imgPlot], 2, 1)
+        imgStack = stackImages([img, imgPlot], 2, 1)
     else:
-        imgStack = cvzone.stackImages([img, img], 2, 1)
+        imgStack = stackImages([img, img], 2, 1)
 
     cv2.imshow("Drowsiness Detector", imgStack)
     if cv2.waitKey(1) == 27:
